@@ -9,39 +9,53 @@ from env import host, password, user
 def get_connection(db, user=user, host=host, password=password):
     return f'mysql+pymysql://{user}:{password}@{host}/{db}'
 
+def new_titanic_data():
+    sql_query = 'SELECT * FROM passengers'
+    df = pd.read_sql(sql_query, get_connection('titanic_db'))
+    df.to_csv('titanic_df.csv')
+    return df
 
-def get_titanic_data():
-    filename = 'titanic.csv'
-
-    if os.path.isfile(filename):
-        return pd.read_csv(filename)
+def get_titanic_data(cached=False):
+    '''
+    This function reads in titanic data from Codeup database if cached == False
+    or if cached == True reads in titanic df from a csv file, returns df
+    '''
+    if cached or os.path.isfile('titanic_df.csv') == False:
+        df = new_titanic_data()
     else:
-        # read the SQL query into a dataframe
-        df = pd.read_sql('SELECT * FROM passengers', get_connection('titanic_db'))
+        df = pd.read_csv('titanic_df.csv', index_col=0)
+    return df
 
-        # Write that dataframe to disk for later. Called "caching" the data for later.
-        df.to_csv(filename)
+def new_iris_data():
+    '''
+    This function reads the iris data from the Codeup db into a df,
+    writes it to a csv file, and returns the df.
+    '''
+    sql_query = """
+                SELECT species_id,
+                species_name,
+                sepal_length,
+                sepal_width,
+                petal_length,
+                petal_width
+                FROM measurements
+                JOIN species
+                USING(species_id)
+                """
+    df = pd.read_sql(sql_query, get_connection('iris_db'))
+    df.to_csv('iris_df.csv')
+    return df
 
-        # Return the dataframe to the calling code
-        return df
-
-def get_iris_data():
-    filename = 'iris.csv'
-
-    if os.path.isfile(filename):
-        return pd.read_csv(filename)
+def get_iris_data(cached=False):
+    '''
+    This function reads in iris data from Codeup database if cached == False
+    or if cached == True reads in iris df from a csv file, returns df
+    '''
+    if cached or os.path.isfile('iris_df.csv') == False:
+        df = new_iris_data()
     else:
-        # read the SQL query into a dataframe
-        df = pd.read_sql('''SELECT * FROM species JOIN measurements USING(species_id);''', get_connection('iris_db'))
-
-        # Write that dataframe to disk for later. Called "caching" the data for later.
-        df.to_csv(filename)
-
-        # Return the dataframe to the calling code
-        return df
-
-
-
+        df = pd.read_csv('iris_df.csv', index_col=0)
+    return df
 
 
 
