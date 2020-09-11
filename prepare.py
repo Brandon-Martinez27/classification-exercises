@@ -1,3 +1,7 @@
+import pandas as pd
+import acquire as a
+import numpy as np
+
 def prep_titanic(df):
     # load the titanic data set.
     titanic = a.get_titanic_data()
