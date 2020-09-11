@@ -6,7 +6,7 @@ def prep_titanic(df):
     # load the titanic data set.
     titanic = a.get_titanic_data()
     
-    # Handle the missing values in the embark_town and `embarked' columns.
+    # Drop the missing values in the embark_town and `embarked' columns.
     titanic = titanic[titanic.embark_town.notnull()]
     
     # Remove the deck column.
